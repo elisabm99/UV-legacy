@@ -30,7 +30,7 @@ where `LLLLLL` is the LOS identifier (the first 6 characters of the original exp
 Each `*.fits` contains:
 
 ### HDU 0: PRIMARY
-Header only (no image data). It stores instrument metadata copied from the source exposures plus stack bookkeeping keywords (see below).
+Header only (no image data). It stores instrument metadata copied from the source exposures plus stack bookkeeping keywords at the end.
 
 ### HDU 1: `SCI` (binary table)
 The main stacked spectrum.
@@ -49,7 +49,28 @@ Columns:
 - The stacked `DQ` is the **bitwise OR** across input exposures (any flagged pixel remains flagged).
 - Wavelength grids are required to match across inputs (within numerical tolerance).
 
-### HDU 2 (optional): `KERNEL` (binary table)
+### HDU 2: `STACKINFO` (binary table)
+Provenance table listing the original FOS exposures that entered the stack.
+
+Columns:
+
+| Column | Type | Units | Meaning |
+|---|---:|---|---|
+| `ROOTNAME` | string | — | Original FOS exposure rootname (e.g. `y0g11o01t`) |
+| `EXPPIX` | float64 | s | Representative per-exposure exposure time per pixel used in the counts construction |
+| `DATE-OBS` | string | — | Observation date from the exposure header (if available) |
+| `TIME-OBS` | string | — | Observation time from the exposure header (if available) |
+| `AISHFILE` | string | — | Inverse sensitivity reference identifier used for that exposure |
+| `FL1HFILE` | string | — | Flat-field reference identifier used for that exposure |
+| `CCSD` | string | — | Time-dependent sensitivity reference identifier (TIM correction) |
+
+
+The extension header keyword `NMEMBER` gives the number of contributing exposures.
+
+
+
+
+### HDU 3: `KERNEL` (binary table)
 This stores the precomputed response kernel `R(λ)` for the stack described in 2506.19962.
 
 Columns:
